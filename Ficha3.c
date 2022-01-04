@@ -174,7 +174,9 @@ void add2 (char *s, THash t) {
     unsigned pos = hash(s) % Size;
     Nodo *aux = t[pos], *last = aux;
     if (aux->chave != NULL) {
-        for (; aux != NULL && strcmp(aux->chave, s) != 0; aux = aux->prox) last = aux;
+        for (; aux != NULL && strcmp(aux->chave, s) != 0; aux = aux->prox) {
+            last = aux;
+        }
         if (aux == NULL) {
             Nodo *new_node = calloc(sizeof(THash), 1);
             new_node->chave = strdup(s);
@@ -208,13 +210,34 @@ int lookup (char *s, THash t) {
 
 int remove2 (char *s, THash t) {
     int r = 0;
-    Nodo *aux;
     unsigned pos = hash(s) % Size;
-    for (aux = t[pos]; aux != NULL && strcmp(s, aux->chave) != 0; aux = aux->prox);
+    Nodo *aux, *last;
+    aux = t[pos];
+    last = aux;
+    for (aux = t[pos]; aux != NULL && strcmp(s, aux->chave) != 0; aux = aux->prox) {
+        last = aux;
+    }
     if (aux != NULL) {
         r = 1;
         aux->ocorr--;
-        if (aux->ocorr == 0) free(aux);
+        if (aux->ocorr == 0) {
+            if (aux->prox == NULL) {
+                last->prox = NULL;
+                free(aux->chave);
+                free(aux);
+            }
+            else if (aux == last) {
+                last = t[pos];
+                t[pos] = t[pos]->prox;
+                free(last->chave);
+                free(last);
+            }
+            else {
+                last->prox = aux->prox;
+                free(aux->chave);
+                free(aux);
+            }
+        }
     }
     return r;
 }
@@ -346,24 +369,6 @@ void add4 (char *s, THash3 t) {
     }
 }
 
-void print_table(THash t) {
-    for (int i = 0; i < Size; i++) {
-        for (Nodo *aux = t[i]; aux != NULL; aux = aux->prox) {
-            if (t[i]->chave != NULL)
-                printf("%s - %d   ", aux->chave, aux->ocorr);
-        }
-    }
-}
-
 int main () {
-    THash t;
-    initEmpty(t);
-    //printf("%d", hash("feijk") % Size);
-    add2("feijk", t);
-    add2("feija", t);
-    add2("feija", t);
-    remove2("feija", t);
-    printf("%d", lookup("feija", t));
-    print_table(t);
     return 0;
 }
