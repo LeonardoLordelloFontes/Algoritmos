@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define Max 100
-#define Size 100
+#define Size 10
 #define Free 0
 #define Used 1
 #define Del 2
@@ -164,23 +164,33 @@ unsigned hash(char *str){
 
 void initEmpty (THash t) {
     for (int i = 0; i < Size; i++) {
-        t[i]->chave = NULL;
-        t[i]->ocorr = 0;
+        t[i] = calloc(sizeof(Nodo), 1);
     }
 }
 
 // Ex 2
 
 void add2 (char *s, THash t) {
-    Nodo *aux;
     unsigned pos = hash(s) % Size;
-    for (aux = t[pos]; strcmp(s, aux->chave) != 0 && aux != NULL; aux = aux->prox);
-    if (aux == NULL) {
-        Nodo *new_node = calloc(sizeof(Nodo), 1);
-        new_node->chave = strdup(s);
-        aux = new_node;
+    Nodo *aux = t[pos], *last = aux;
+    if (aux->chave != NULL) {
+        for (; aux != NULL && strcmp(aux->chave, s) != 0; aux = aux->prox) last = aux;
+        if (aux == NULL) {
+            Nodo *new_node = calloc(sizeof(THash), 1);
+            new_node->chave = strdup(s);
+            new_node->prox = NULL;
+            new_node->ocorr = 1;
+            last->prox = new_node;
+        }
+        else {
+            aux->ocorr++;
+        }
     }
-    aux->ocorr++;
+    else {
+        t[pos]->chave = strdup(s);
+        t[pos]->ocorr = 1;
+        t[pos]->prox = NULL;
+    }
 }
 
 // Ex 3
@@ -189,7 +199,7 @@ int lookup (char *s, THash t) {
     int r = 0;
     Nodo *aux;
     unsigned pos = hash(s) % Size;
-    for (aux = t[pos]; strcmp(s, aux->chave) != 0 && aux != NULL; aux = aux->prox);
+    for (aux = t[pos]; aux != NULL && strcmp(s, aux->chave) != 0; aux = aux->prox);
     if (aux != NULL) r = aux->ocorr;
     return r;
 }
@@ -200,7 +210,7 @@ int remove2 (char *s, THash t) {
     int r = 0;
     Nodo *aux;
     unsigned pos = hash(s) % Size;
-    for (aux = t[pos]; strcmp(s, aux->chave) != 0 && aux != NULL; aux = aux->prox);
+    for (aux = t[pos]; aux != NULL && strcmp(s, aux->chave) != 0; aux = aux->prox);
     if (aux != NULL) {
         r = 1;
         aux->ocorr--;
@@ -308,7 +318,7 @@ int garb_collection (THash2 t) {
 int where2(char *s, THash3 t) {
     unsigned hash_n = hash(s), i, r = 0, del = 0;
     for (i = 0; t[(hash_n + i) % Size].status != Free && strcmp(s, t[(hash_n + i) % Size].chave) != 0 && i < Size; i++) {
-        if (t[(hash_n + i) % Size].status == Used) t[(hash_n + i) % Size].probC++; // colisões aqui
+        if (t[(hash_n + i) % Size].status == Used) t[(hash_n + i) % Size].probC++; // colisÃµes aqui
         if (t[(hash_n + i) % Size].status == Del && !del) {
             del++;
             r = (hash_n + i) % Size;
@@ -323,7 +333,7 @@ int where2(char *s, THash3 t) {
     return r;
 }
 
-void add3 (char *s, THash3 t) {
+void add4 (char *s, THash3 t) {
     int pos = where2(s, t);
     if (t[pos].status == Used) {
         t[pos].ocorr++;
@@ -336,7 +346,24 @@ void add3 (char *s, THash3 t) {
     }
 }
 
-int main () {
+void print_table(THash t) {
+    for (int i = 0; i < Size; i++) {
+        for (Nodo *aux = t[i]; aux != NULL; aux = aux->prox) {
+            if (t[i]->chave != NULL)
+                printf("%s - %d   ", aux->chave, aux->ocorr);
+        }
+    }
+}
 
+int main () {
+    THash t;
+    initEmpty(t);
+    //printf("%d", hash("feijk") % Size);
+    add2("feijk", t);
+    add2("feija", t);
+    add2("feija", t);
+    remove2("feija", t);
+    printf("%d", lookup("feija", t));
+    print_table(t);
     return 0;
 }
