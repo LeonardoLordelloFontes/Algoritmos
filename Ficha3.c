@@ -328,9 +328,9 @@ int garb_collection (THash2 t) {
         }
         else if (t[i].status == Used){
             int pos = where(t[i].chave, t);
-            struct bucket *aux = &t[i];
+            struct bucket aux = t[i];
             t[i] = t[pos];
-            t[pos] = *aux;
+            t[pos] = aux;
         }
     }
     return r;
