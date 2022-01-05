@@ -328,6 +328,10 @@ int garb_collection (THash2 t) {
         }
         else if (t[i].status == Used){
             int pos = where(t[i].chave, t);
+            if (t[pos].status == Del) {
+                t[pos].status = Free;
+                r++;
+            }
             struct bucket aux = t[i];
             t[i] = t[pos];
             t[pos] = aux;
