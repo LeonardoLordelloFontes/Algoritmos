@@ -246,23 +246,19 @@ int remove2 (char *s, THash t) {
 
 // Ex 1
 
-int garb_collection (THash2 t) {
-    int r = 0;
-    for(int i = 0; i < Size; i++) {
-        if (t[i].status == Del) {
-            t[i].status = Free;
-            r++;
+int where (char *s, THash2 t) {
+    unsigned hash_n = hash(s), i, r = 0, del = 0;
+    for (i = 0; t[(hash_n + i) % Size].status != Free && strcmp(s, t[(hash_n + i) % Size].chave) != 0 && i < Size; i++) {
+        if (t[(hash_n + i) % Size].status == Del && !del) {
+            del++;
+            r = (hash_n + i) % Size;
         }
-        else if (t[i].status == Used){
-            int pos = where(t[i].chave, t);
-            if (t[pos].status == Del) {
-                t[pos].status = Free;
-                r++;
-            }
-            struct bucket aux = t[i];
-            t[i] = t[pos];
-            t[pos] = aux;
-        }
+    }
+    if (i == Size && del)  {
+        r = -1;
+    }
+    else if (strcmp(s, t[(hash_n + i) % Size].chave) == 0 && t[(hash_n + i) % Size].status == Used){
+        r = (hash_n + i) % Size;
     }
     return r;
 }
