@@ -338,7 +338,7 @@ int garb_collection (THash2 t) {
 
 // Ex 4
 
-int where2(char *s, THash3 t) {
+int where2 (char *s, THash2 t) {
     unsigned hash_n = hash(s), i, r = 0, del = 0;
     for (i = 0; t[(hash_n + i) % Size].status != Free && strcmp(s, t[(hash_n + i) % Size].chave) != 0 && i < Size; i++) {
         if (t[(hash_n + i) % Size].status == Used) t[(hash_n + i) % Size].probC++; // colisões aqui
@@ -350,7 +350,7 @@ int where2(char *s, THash3 t) {
     if (i == Size && del)  {
         r = -1;
     }
-    else if (!del || strcmp(s, t[(hash_n + i) % Size].chave) == 0){
+    else if (strcmp(s, t[(hash_n + i) % Size].chave) == 0 && t[(hash_n + i) % Size].status == Used){
         r = (hash_n + i) % Size;
     }
     return r;
