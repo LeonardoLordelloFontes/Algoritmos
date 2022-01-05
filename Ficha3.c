@@ -259,9 +259,9 @@ int garb_collection (THash2 t) {
                 t[pos].status = Free;
                 r++;
             }
-            struct bucket *aux = &t[i];
+            struct bucket aux = t[i];
             t[i] = t[pos];
-            t[pos] = *aux;
+            t[pos] = aux;
         }
     }
     return r;
