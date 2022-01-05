@@ -254,7 +254,7 @@ int where (char *s, THash2 t) {
             r = (hash_n + i) % Size;
         }
     }
-    if (i == Size && del)  {
+    if (i == Size && !del)  {
         r = -1;
     }
     else if (t[(hash_n + i) % Size].status != Del){
@@ -351,7 +351,7 @@ int where2 (char *s, THash2 t) {
             r = (hash_n + i) % Size;
         }
     }
-    if (i == Size && del)  {
+    if (i == Size && !del)  {
         r = -1;
     }
     else if (t[(hash_n + i) % Size].status != Del){
