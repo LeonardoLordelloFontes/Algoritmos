@@ -257,7 +257,7 @@ int where (char *s, THash2 t) {
     if (i == Size && !del)  {
         r = -1;
     }
-    else if (t[(hash_n + i) % Size].status != Del){
+    else if (t[(hash_n + i) % Size].status == Free && !del || t[(hash_n + i) % Size].status == Used){
         r = (hash_n + i) % Size;
     }
     return r;
@@ -354,7 +354,7 @@ int where2 (char *s, THash2 t) {
     if (i == Size && !del)  {
         r = -1;
     }
-    else if (t[(hash_n + i) % Size].status != Del){
+    else if (t[(hash_n + i) % Size].status == Free && !del || t[(hash_n + i) % Size].status == Used){
         r = (hash_n + i) % Size;
     }
     return r;
