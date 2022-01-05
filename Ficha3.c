@@ -254,7 +254,7 @@ int where (char *s, THash2 t) {
             r = (hash_n + i) % Size;
         }
     }
-    if (i == Size && del)  {
+    if (i == Size && !del)  {
         r = -1;
     }
     else if (!del || strcmp(s, t[(hash_n + i) % Size].chave) == 0){
